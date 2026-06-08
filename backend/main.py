@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from anthropic import Anthropic
 from dotenv import load_dotenv
@@ -182,4 +184,4 @@ async def transform_draft(request: TransformRequest):
 
 @app.get("/")
 def root():
-    return {"status": "RIA Inbox Assistant is running", "model": "claude-haiku-4-5-20251001", "mode": "parallel"}
+    return FileResponse(os.path.join(os.path.dirname(__file__), "../frontend/index.html"))
