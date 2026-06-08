@@ -303,6 +303,10 @@
     .sent-btn.marked{background:var(--green);color:#fff;pointer-events:none}
     .sent-btn svg{width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
 
+    .email-btn{background:none;border:1px solid var(--accent);color:var(--accent);border-radius:5px;padding:5px 10px;font-family:'DM Sans',sans-serif;font-size:10.5px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all .15s;white-space:nowrap}
+    .email-btn:hover{background:var(--accent);color:#fff}
+    .email-btn svg{width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+
     .spinner{width:13px;height:13px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
     @keyframes spin{to{transform:rotate(360deg)}}
     @keyframes fadeUp{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
@@ -924,6 +928,9 @@ function selectEmail(i){
             <button class="sent-btn" id="sentBtn${i}" onclick="markSent(${i})">
               <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Mark Sent
             </button>
+            <button class="email-btn" id="emailBtn${i}" onclick="emailDraft(${i})">
+              <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg> Email Draft
+            </button>
           </div>
         </div>
         <textarea class="reply-textarea" id="replyTa${i}">${escHtml(r.draft_reply)}</textarea>
@@ -960,6 +967,16 @@ async function transformDraft(i, mode) {
     btn.classList.remove('loading');
     btn.innerHTML = origHtml;
   }
+}
+
+function emailDraft(i) {
+  const r = results[i];
+  const ta = document.getElementById(`replyTa${i}`);
+  const meta = parseEmailMeta(r.original_email);
+  const to = meta.from ? meta.from.match(/<(.+)>/)?.[1] || '' : '';
+  const subject = encodeURIComponent(`Re: ${r.subject || 'Your inquiry'}`);
+  const body = encodeURIComponent(ta.value);
+  window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
 }
 
 /* ── MARK SENT ── */
